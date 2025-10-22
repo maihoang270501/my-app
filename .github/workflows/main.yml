@@ -1,0 +1,44 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main   # Workflow sẽ chạy khi có thay đổi trên nhánh "main"
+  pull_request:
+    branches:
+      - main   # Workflow sẽ chạy khi có Pull Request vào nhánh "main"
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest   # Chạy trên môi trường Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2   # Lấy mã nguồn từ repository
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'   # Cài đặt Node.js phiên bản 14
+
+    - name: Install dependencies
+      run: npm install   # Cài đặt các dependencies từ file package.json
+
+    - name: Run linting
+      run: npm run lint   # Chạy lệnh lint (kiểm tra mã nguồn)
+
+    - name: Run tests
+      run: npm test   # Chạy test (kiểm tra mã nguồn)
+
+  upload-artifact:
+    runs-on: ubuntu-latest   # Chạy trên môi trường Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Upload build or coverage artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage
+        path: ./coverage/  # Đường dẫn tới thư mục chứa kết quả coverage (nếu có)
